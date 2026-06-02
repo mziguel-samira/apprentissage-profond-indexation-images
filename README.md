@@ -13,9 +13,9 @@ similarity**.
 
 ## Project structure
 
-- `/tmp/workspace/mziguel-samira/apprentissage-profond-indexation-images/image_indexing.py`
+- `image_indexing.py`
   - Main script (indexing + search CLI)
-- `/tmp/workspace/mziguel-samira/apprentissage-profond-indexation-images/requirements.txt`
+- `requirements.txt`
   - Python dependencies
 
 ## Requirements
@@ -28,9 +28,7 @@ pip install -r requirements.txt
 
 ## Usage
 
-Run commands from:
-
-`/tmp/workspace/mziguel-samira/apprentissage-profond-indexation-images`
+Run commands from the project root directory.
 
 ### 1) Build an image index (CSV)
 

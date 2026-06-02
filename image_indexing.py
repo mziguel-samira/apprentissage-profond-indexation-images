@@ -9,6 +9,7 @@ from typing import Callable, List, Sequence, Tuple
 
 
 SUPPORTED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".webp"}
+INDEX_COLUMNS = ["image_path", "feature"]
 
 
 def load_cnn_model(model_name: str):
@@ -62,7 +63,7 @@ def deserialize_feature(feature_text: str):
     """Convert the CSV string back to a numeric vector."""
     import numpy as np
 
-    vector = np.fromstring(feature_text, sep=" ", dtype=np.float32)
+    vector = np.array(feature_text.split(), dtype=np.float32)
     if vector.size == 0:
         raise ValueError("Found an empty feature vector in index.")
     return vector
@@ -93,7 +94,7 @@ def build_index(image_dir: Path, output_csv: Path, model_name: str) -> None:
         feature = extract_feature(path, model, preprocess_fn)
         rows.append({"image_path": str(path), "feature": serialize_feature(feature)})
 
-    dataframe = pd.DataFrame(rows, columns=["image_path", "feature"])
+    dataframe = pd.DataFrame(rows, columns=INDEX_COLUMNS)
     dataframe.to_csv(output_csv, index=False)
     print(f"Indexed {len(rows)} images into: {output_csv}")
 
@@ -104,11 +105,11 @@ def load_index(index_csv: Path):
     import numpy as np
 
     dataframe = pd.read_csv(index_csv)
-    if "image_path" not in dataframe.columns or "feature" not in dataframe.columns:
+    if INDEX_COLUMNS[0] not in dataframe.columns or INDEX_COLUMNS[1] not in dataframe.columns:
         raise ValueError("Index CSV must contain 'image_path' and 'feature' columns.")
 
-    image_paths: List[str] = dataframe["image_path"].astype(str).tolist()
-    features = np.vstack([deserialize_feature(text) for text in dataframe["feature"]])
+    image_paths: List[str] = dataframe[INDEX_COLUMNS[0]].astype(str).tolist()
+    features = np.vstack([deserialize_feature(text) for text in dataframe[INDEX_COLUMNS[1]]])
     return image_paths, features
 
 
